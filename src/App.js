@@ -3,17 +3,18 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import ProductList from './components/ProductList';
 import Cart from './components/Cart';
 import OrderConfirmation from './components/OrderConfirmation';
+import './App.css'; // Ensure the CSS is correctly imported
 
 const App = () => {
-  const [cart, setCart] = useState([]); // Cart state is maintained here
+  const [cart, setCart] = useState([]); // Centralized cart state
 
   return (
     <Router>
       <div>
-        <nav style={styles.navbar}>
-          <Link to="/" style={styles.link}>Home</Link>
-          <Link to="/cart" style={styles.link}>Cart</Link>
-          <Link to="/order" style={styles.link}>Order Confirmation</Link>
+        <nav className="navbar">
+          <Link to="/" className="nav-link">Home</Link>
+          <Link to="/cart" className="nav-link">Cart</Link>
+          <Link to="/order" className="nav-link">Order Confirmation</Link>
         </nav>
         <Routes>
           <Route path="/" element={<ProductList cart={cart} setCart={setCart} />} />
@@ -23,20 +24,6 @@ const App = () => {
       </div>
     </Router>
   );
-};
-
-const styles = {
-  navbar: {
-    backgroundColor: '#007bff',
-    padding: '10px',
-    display: 'flex',
-    justifyContent: 'space-around',
-  },
-  link: {
-    color: 'white',
-    textDecoration: 'none',
-    fontSize: '18px',
-  },
 };
 
 export default App;

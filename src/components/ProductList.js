@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { fetchProducts, addToCart } from '../api'; // Import API functions
-import './ProductList.css'; // Optional for styling
+import { fetchProducts, addToCart } from '../api';
+import './ProductList.css';
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [quantities, setQuantities] = useState({}); // Track quantities for each product
+  const [quantities, setQuantities] = useState({});
 
   useEffect(() => {
     const getProducts = async () => {
@@ -16,11 +16,10 @@ const ProductList = () => {
           id: product.id,
           name: product.name,
           price: product.price,
-          availableQuantity: product.quantityInStock, // Map quantityInStock to availableQuantity
+          availableQuantity: product.quantityInStock,
         }));
         setProducts(mappedData);
 
-        // Initialize quantities with default value of 1 for each product
         const initialQuantities = data.reduce((acc, product) => {
           acc[product.id] = 1;
           return acc;
@@ -39,17 +38,18 @@ const ProductList = () => {
 
   const handleAddToCart = async (product) => {
     try {
-      const quantity = quantities[product.id]; // Get the specified quantity for the product
-      await addToCart({ ...product, quantity }); // Pass product details and quantity
+      const quantity = quantities[product.id];
+      await addToCart({ ...product, quantity });
       alert(`${quantity} ${product.name}(s) has been added to the cart.`);
     } catch (error) {
       console.error('Failed to add to cart:', error.message);
       alert('Failed to add the product to the cart. Please try again.');
     }
   };
+  
 
   const handleQuantityChange = (productId, value) => {
-    const quantity = Math.max(1, Math.min(value, products.find(p => p.id === productId).availableQuantity)); // Ensure valid quantity
+    const quantity = Math.max(1, Math.min(value, products.find(p => p.id === productId).availableQuantity));
     setQuantities({ ...quantities, [productId]: quantity });
   };
 
@@ -68,7 +68,7 @@ const ProductList = () => {
             <input
               id={`quantity-${product.id}`}
               type="number"
-              value={quantities[product.id] || 1} // Default quantity
+              value={quantities[product.id] || 1}
               min="1"
               max={product.availableQuantity}
               onChange={(e) => handleQuantityChange(product.id, parseInt(e.target.value, 10))}

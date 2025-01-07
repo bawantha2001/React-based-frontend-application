@@ -1,10 +1,27 @@
-import React, { useState } from 'react';
-import { placeOrder } from '../api';
+import React, { useEffect, useState } from 'react';
+import { fetchCartItems, placeOrder } from '../api';
+import './OrderConfirmation.css';
 
-const OrderConfirmation = ({ cart, setCart }) => {
+const OrderConfirmation = () => {
+  const [cart, setCart] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [orderSuccess, setOrderSuccess] = useState(false);
 
-  console.log('Cart in OrderConfirmation:', cart); // Debug cart data
+  useEffect(() => {
+    const getCartItems = async () => {
+      try {
+        const data = await fetchCartItems(); // API call to fetch cart items
+        setCart(data);
+        setLoading(false);
+      } catch (err) {
+        setError(`Failed to load cart: ${err.message}`);
+        setLoading(false);
+      }
+    };
+
+    getCartItems();
+  }, []);
 
   const handlePlaceOrder = async () => {
     if (cart.length === 0) {
@@ -21,9 +38,12 @@ const OrderConfirmation = ({ cart, setCart }) => {
     }
   };
 
+  if (loading) return <p>Loading order summary...</p>;
+  if (error) return <p>{error}</p>;
+
   if (orderSuccess) {
     return (
-      <div>
+      <div className="order-confirmation">
         <h2>Order Confirmation</h2>
         <p>Your order has been placed successfully! Thank you for shopping with us.</p>
       </div>
@@ -31,7 +51,7 @@ const OrderConfirmation = ({ cart, setCart }) => {
   }
 
   return (
-    <div>
+    <div className="order-confirmation">
       <h2>Order Summary</h2>
       {cart.length === 0 ? (
         <p>Your cart is empty.</p>
@@ -58,7 +78,7 @@ const OrderConfirmation = ({ cart, setCart }) => {
             </tbody>
           </table>
           <h3>Total Amount: ${cart.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2)}</h3>
-          <button onClick={handlePlaceOrder}>Place Order</button>
+          <button onClick={handlePlaceOrder} className="place-order-button">Place Order</button>
         </div>
       )}
     </div>
